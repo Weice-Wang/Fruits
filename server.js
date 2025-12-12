@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const Fruit = require("./models/fruit.js");
 const methodOverride = require("method-override"); // new
 const morgan = require("morgan"); //new
+const authController = require("./controllers/auth.js");
 
 // GLOBAL VARIABLE
 const app = express();
@@ -67,7 +68,7 @@ app.put("/fruits/:fruitId", async (req, res) => {
   res.redirect(`/fruits/${req.params.fruitId}`);
 });
 
-// CREATE ROUTE
+// CREATE ROUTE and send to database
 app.post("/fruits", async (req, res) => {
   if (req.body.isReadyToEat === "on") {
     req.body.isReadyToEat = true;
@@ -78,8 +79,6 @@ app.post("/fruits", async (req, res) => {
   await Fruit.create(req.body);
   res.redirect("/fruits");
 });
-
-// server.js
 
 // EDIT ROUTE
 // GET localhost:3000/fruits/:fruitId/edit
@@ -97,6 +96,8 @@ app.get("/fruits/:fruitId", async (req, res) => {
   console.log(foundFruit);
   res.render("fruits/show.ejs", { fruit: foundFruit });
 });
+
+app.use("/auth", authController);
 
 // APP LISTENER
 app.listen(PORT, () => {
